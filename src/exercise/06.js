@@ -11,32 +11,31 @@ import {
 } from '../pokemon'
 
 function PokemonInfo({pokemonName}) {
-  const [pokemon, setPokemon] = React.useState(null)
-  const [error, setError] = React.useState('')
-  const [status, setStatus] = React.useState('idle')
+  const [state, setState] = React.useState({
+    status: 'idle',
+    pokemon: null,
+    error: null,
+  })
+  const {status, pokemon, error} = state
+  // console.log(state)
 
   React.useEffect(() => {
     if (!pokemonName) {
       return
     }
-    setPokemon(null)
-    setStatus('pending')
-
+    setState({status: 'pending'})
     // option 1: using .catch
     // fetchPokemon(pokemonName)
     //   .then(pokemon => setPokemon(pokemon))
     //   .catch(error => setError(error))
 
     // option 2: using the second argument to .then
-
     fetchPokemon(pokemonName).then(
       pokemon => {
-        setPokemon(pokemon)
-        setStatus('resolved')
+        setState({pokemon, status: 'resolved'})
       },
       error => {
-        setError(error)
-        setStatus('rejected')
+        setState({error, status: 'rejected'})
       },
     )
 
