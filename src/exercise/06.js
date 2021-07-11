@@ -9,30 +9,7 @@ import {
   PokemonInfoFallback,
   PokemonDataView,
 } from '../pokemon'
-
-class ErrorBoundary extends React.Component {
-  state = {error: null}
-
-  static getDerivedStateFromError(error) {
-    return {error}
-  }
-
-  render() {
-    const {error} = this.state
-    if (error) {
-      return <this.props.FallbackComponent error={error} />
-
-      // return (
-      //   <div role="alert">
-      //     There was an error:{' '}
-      //     <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
-      //   </div>
-      // )
-    }
-    // console.log('ErrorBoundary:', this.state.error)
-    return this.props.children
-  }
-}
+import {ErrorBoundary} from 'react-error-boundary'
 
 function PokemonInfo({pokemonName}) {
   const [state, setState] = React.useState({
