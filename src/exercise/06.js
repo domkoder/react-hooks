@@ -11,12 +11,59 @@ import {
 } from '../pokemon'
 import {ErrorBoundary} from 'react-error-boundary'
 
+function stateReducer(state, action) {
+  switch (action.type) {
+    case "IDLE": {
+      return {
+        ...state,
+        status: 'idle',
+        pokemon: null,
+        error: null,
+      }
+    }
+    case "PENDING": {
+      return {
+        ...state,
+        status: 'pending',
+        pokemon: null,
+        error: null,
+      }
+    }
+    case "REJECTED": {
+      return {
+        ...state,
+        status: 'rejected',
+        pokemon: null,
+        error: action.error,
+      }
+    }
+    case "RESOLVED": {
+      return {
+        ...state,
+        status: 'resolved',
+        pokemon: action.pokemon,
+        error: null,
+      }
+    }
+
+    default: {
+      throw new Error(`Unhandled action type ${action.type}`)
+    }
+  }
+}
+
 function PokemonInfo({pokemonName}) {
-  const [state, setState] = React.useState({
+  const initialState = {
     status: 'idle',
     pokemon: null,
     error: null,
-  })
+  }
+  const [state, dispatch] = React.useReducer(stateReducer, initialState);
+  // const [state, setState] = React.useState({
+  //   status: 'idle',
+  //   pokemon: null,
+  //   error: null,
+  // })
   const {status, pokemon, error} = state
   // console.log(state)
 
@@ -24,7 +71,7 @@ function PokemonInfo({pokemonName}) {
     if (!pokemonName) {
       return
     }
-    setState({status: 'pending'})
+    dispatch({type: 'PENDING'})
     // option 1: using .catch
     // fetchPokemon(pokemonName)
     //   .then(pokemon => setPokemon(pokemon))
@@ -33,10 +80,13 @@ function PokemonInfo({pokemonName}) {
     // option 2: using the second argument to .then
     fetchPokemon(pokemonName).then(
       pokemon => {
-        setState({pokemon, status: 'resolved'})
+        // setState({pokemon, status: 'resolved'})
+        dispatch({type: 'RESOLVED', pokemon})
       },
       error => {
-        setState({error, status: 'rejected'})
+        // setState({error, status: 'rejected'})
+        dispatch({type: 'REJECTED', error})
+
       },
     )
 
